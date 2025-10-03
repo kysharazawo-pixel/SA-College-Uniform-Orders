@@ -731,7 +731,7 @@ const cartTotal = cart.reduce((sum, it) => sum + (it.price * it.qty), 0);
 // Build a readable orderDetails string from cart items
 const orderDetails = cart.map(it => 
   `${it.name} | Size: ${it.size} | Qty: ${it.qty} | R${(it.price*it.qty).toFixed(2)}`
-).join('<br>');
+).join('\n');
 
 const emailParams = {
   parentName: parentName,       // matches {{parentName}}
@@ -795,6 +795,7 @@ const emailParams = {
        ========================= -->
 </body>
 </html>
+
 
 
 
