@@ -726,18 +726,25 @@
           }
 
           // Prepare email template parameters for EmailJS
-          // NOTE: Your EmailJS template must be set up to receive these variables.
-          const emailParams = {
-            parentName: parentName,
-            contactNumber: contactNumber,
-            parentEmail: email,
-            learnerName: learnerName,
-            grade: grade,
-            schoolLevel: schoolLevel,
-            cart: JSON.stringify(cart),
-            // PDF as base64 data string (the template can use it if configured)
-            pdfBase64: base64
-          };
+const cartTotal = cart.reduce((sum, it) => sum + (it.price * it.qty), 0);
+
+// Build a readable orderDetails string from cart items
+const orderDetails = cart.map(it => 
+  `${it.name} | Size: ${it.size} | Qty: ${it.qty} | R${(it.price*it.qty).toFixed(2)}`
+).join('<br>');
+
+const emailParams = {
+  parentName: parentName,       // matches {{parentName}}
+  contactNumber: contactNumber, // matches {{contactNumber}}
+  email: email,                 // matches {{email}}
+  parentEmail: email,           // matches {{parentEmail}}
+  learnerName: learnerName,     // matches {{learnerName}}
+  grade: grade,                 // matches {{grade}}
+  schoolLevel: schoolLevel,     // matches {{schoolLevel}}
+  orderDetails: orderDetails,   // matches {{orderDetails}}
+  cartTotal: `R${cartTotal.toFixed(2)}` // matches {{cartTotal}}
+};
+
 
           // Send email using EmailJS service/template from your account
           // Service ID: service_fe66puw
@@ -788,5 +795,6 @@
        ========================= -->
 </body>
 </html>
+
 
 
