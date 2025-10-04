@@ -13,7 +13,7 @@
   <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
     // Initialize EmailJS with your public key (must match your EmailJS account).
-    // Note: you already provided this key:GEyF3k2gS9_KFma8Y
+    // Public key shown here was previously provided.
     (function(){
       try {
         emailjs.init("GEyF3k2gS9_KFma8Y");
@@ -39,7 +39,7 @@
       --gold: #ffc107;
       --white: #ffffff;
       --muted: #f4f6f8;
-      --accent: #0f7b3a; /* green accent (for legacy items if needed) */
+      --accent: #0f7b3a;
     }
     html,body{
       margin:0;
@@ -237,7 +237,6 @@
        ========================= -->
   <header class="site-header" role="banner">
     <!-- Make sure your logo image is in the same folder and named exactly as used below. -->
-    <!-- If you uploaded logo.jpg to /mnt/data earlier, use that filename or change src accordingly. -->
     <img class="logo" id="schoolLogo" src="logo.jpg" alt="SA College Private School logo" />
     <div class="heading">
       <h1>SA College Private School</h1>
@@ -356,28 +355,28 @@
 
         <div class="total" id="grandTotal">Total: R0.00</div>
 
-        <!-- 💳 Payment Information Section -->
-<div id="payment-info" style="margin-top: 30px; border: 2px solid #169179; border-radius: 10px; background-color: #f2faf8; padding: 20px; font-family: 'Comic Sans MS', sans-serif;">
-  <h3 style="background-color: #ba372a; color: white; padding: 10px; border-radius: 8px 8px 0 0; margin-top: 0;">
-    💳 Payment Information
-  </h3>
-  <p>After submitting your order, please make an <strong>EFT payment</strong> to the account below.</p>
-  <p>Use <strong>“Uniform – [Child’s Name]”</strong> as your payment reference.</p>
-  <p>Then email your <strong>proof of payment and order receipt</strong> to:</p>
-  <p style="margin-left: 20px;">
-    📧 <a href="mailto:admin@sacps.co.za">admin@sacps.co.za</a> or 
-    <a href="mailto:info@sacps.co.za">info@sacps.co.za</a>
-  </p>
-  
-  <h4 style="color: #169179;">Banking Details:</h4>
-  <ul style="list-style-type: none; padding-left: 0;">
-    <li><strong>Bank:</strong> Nedbank Limited</li>
-    <li><strong>Branch Code:</strong> 198765</li>
-    <li><strong>Account Holder:</strong> SA College Private School</li>
-    <li><strong>Account Number:</strong> 1202745946</li>
-    <li><strong>Account Type:</strong> Cheque</li>
-  </ul>
-</div>
+        <!-- 💳 Payment Information Section (visual only, part of HTML) -->
+        <div id="payment-info" style="margin-top: 30px; border: 2px solid #169179; border-radius: 10px; background-color: #f2faf8; padding: 20px; font-family: 'Comic Sans MS', sans-serif;">
+          <h3 style="background-color: #ba372a; color: white; padding: 10px; border-radius: 8px 8px 0 0; margin-top: 0;">
+            💳 Payment Information
+          </h3>
+          <p>After submitting your order, please make an <strong>EFT payment</strong> to the account below.</p>
+          <p>Use <strong>“Uniform – [Child’s Name]”</strong> as your payment reference.</p>
+          <p>Then email your <strong>proof of payment and order receipt</strong> to:</p>
+          <p style="margin-left: 20px;">
+            📧 <a href="mailto:admin@sacps.co.za">admin@sacps.co.za</a> or 
+            <a href="mailto:info@sacps.co.za">info@sacps.co.za</a>
+          </p>
+
+          <h4 style="color: #169179;">Banking Details:</h4>
+          <ul style="list-style-type: none; padding-left: 0;">
+            <li><strong>Bank:</strong> Nedbank Limited</li>
+            <li><strong>Branch Code:</strong> 198765</li>
+            <li><strong>Account Holder:</strong> SA College Private School</li>
+            <li><strong>Account Number:</strong> 1202745946</li>
+            <li><strong>Account Type:</strong> Cheque</li>
+          </ul>
+        </div>
 
         <!-- Submit button -->
         <button type="submit" class="btn btn-gold" id="submitBtn" style="margin-top:14px;">
@@ -405,7 +404,7 @@
       const oneSize = ['One Size'];
       const allSizes = [...primarySizes, ...highschoolSizes];
 
-      // All items - unchanged from your working list, grouped here for clarity
+      // All items - unchanged from your working list
       const categories = {
         "Tracksuits": [
           {id:"tracksuit_primary",name:"Primary Tracksuit Set",price:600,sizes:primarySizes},
@@ -484,8 +483,8 @@
         return row;
       }
 
-      // find category card bodies and append items
-      document.addEventListener('DOMContentLoaded', function(){
+      // Helper that renders a mapping of categories -> card bodies
+      function renderAllProducts(){
         try {
           // mapping card ids -> category keys
           const mapping = {
@@ -499,6 +498,8 @@
           Object.entries(mapping).forEach(([cardId, catKey])=>{
             const el = document.querySelector('#' + cardId + ' .card-body');
             if(!el) return;
+            // Clear existing content first (defensive)
+            el.innerHTML = '';
             categories[catKey].forEach(item=>{
               el.appendChild(createProductRow(item));
             });
@@ -506,7 +507,7 @@
         } catch (err) {
           console.error("Error building product list:", err);
         }
-      });
+      }
 
       // ---------------------------
       // Cart: collect selected items & render
@@ -515,14 +516,16 @@
 
       function collectCartFromDOM(){
         cart = [];
+        // We read all rows with .item-row and capture qty > 0
         document.querySelectorAll('.item-row').forEach(row=>{
-          const qty = parseInt(row.querySelector('.qty').value || 0, 10);
+          const qtyEl = row.querySelector('.qty');
+          if(!qtyEl) return;
+          const qty = parseInt(qtyEl.value || 0, 10);
           if(qty > 0){
-            const fullName = row.querySelector('.pname').textContent || row.querySelector('.item-name')?.textContent;
-            // some rows may use former naming; guard with fallback
+            const fullName = row.querySelector('.pname')?.textContent || row.querySelector('.item-name')?.textContent || 'Item';
             const name = (fullName || 'Item').split(' — ')[0].trim();
-            const size = row.querySelector('.size').value;
-            const price = parseFloat(row.dataset.price);
+            const size = row.querySelector('.size') ? row.querySelector('.size').value : '';
+            const price = parseFloat(row.dataset.price) || 0;
             cart.push({ name, size, qty, price });
           }
         });
@@ -530,6 +533,7 @@
 
       function renderCart(){
         const tbody = document.getElementById('cartBody');
+        if(!tbody) return;
         tbody.innerHTML = '';
         if(cart.length === 0){
           const tr = document.createElement('tr');
@@ -574,17 +578,20 @@
           removeBtn.style.color = '#d9534f';
           removeBtn.style.border = '1px solid #f0a3a3';
           removeBtn.textContent = 'X';
-          removeBtn.dataset.index = idx;
+          removeBtn.dataset.index = String(idx);
           removeBtn.addEventListener('click', function(e){
             e.preventDefault();
-            cart.splice(this.dataset.index, 1);
+            const index = parseInt(this.dataset.index, 10);
+            if(!isNaN(index)){
+              cart.splice(index, 1);
+            }
             // Also set the corresponding qty input in the DOM to 0
-            // Find matching item and reset qty (best-effort by name & size)
             document.querySelectorAll('.item-row').forEach(r=>{
-              const name = r.querySelector('.pname').textContent.split(' — ')[0].trim();
-              const size = r.querySelector('.size').value;
+              const name = r.querySelector('.pname') ? r.querySelector('.pname').textContent.split(' — ')[0].trim() : '';
+              const size = r.querySelector('.size') ? r.querySelector('.size').value : '';
               if(name === it.name && size === it.size){
-                r.querySelector('.qty').value = 0;
+                const q = r.querySelector('.qty');
+                if(q) q.value = 0;
               }
             });
             collectCartFromDOM();
@@ -605,9 +612,11 @@
 
       // update cart whenever a qty or size changes
       document.addEventListener('input', function(e){
-        if(e.target.classList && (e.target.classList.contains('qty') || e.target.classList.contains('size'))){
-          collectCartFromDOM();
-          renderCart();
+        if(e.target && e.target.classList){
+          if(e.target.classList.contains('qty') || e.target.classList.contains('size')){
+            collectCartFromDOM();
+            renderCart();
+          }
         }
       });
 
@@ -615,200 +624,252 @@
       // PDF generation
       // - includes logo if available (attempts to add image)
       // - uses school colours for header
+      // - includes banking details
       // ---------------------------
       async function createReceiptPDF(details, cartItems){
         // details: { parentName, contactNumber, email, learnerName, grade, schoolLevel }
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-
-        // --- Header band with colours & logo ---
-        const pageWidth = doc.internal.pageSize.getWidth();
-        // draw a navy rectangle
-        doc.setFillColor(0, 39, 77); // navy
-        doc.rect(0, 0, pageWidth, 70, 'F');
-
-        // try to include logo (falls back gracefully)
         try {
-          const logoImg = document.getElementById('schoolLogo');
-          if(logoImg && logoImg.complete){
-            // convert image to data URL via canvas to ensure compatibility
-            const canvas = document.createElement('canvas');
-            canvas.width = logoImg.naturalWidth;
-            canvas.height = logoImg.naturalHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(logoImg, 0, 0);
-            const imgData = canvas.toDataURL('image/png');
-            doc.addImage(imgData, 'PNG', 18, 12, 46, 46);
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+
+          // --- Header band with colours & logo ---
+          const pageWidth = doc.internal.pageSize.getWidth();
+          // draw a navy rectangle
+          doc.setFillColor(0, 39, 77); // navy
+          doc.rect(0, 0, pageWidth, 70, 'F');
+
+          // try to include logo (falls back gracefully)
+          try {
+            const logoImg = document.getElementById('schoolLogo');
+            if(logoImg && logoImg.complete && logoImg.naturalWidth && logoImg.naturalHeight){
+              // convert image to data URL via canvas to ensure compatibility
+              const canvas = document.createElement('canvas');
+              canvas.width = logoImg.naturalWidth;
+              canvas.height = logoImg.naturalHeight;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(logoImg, 0, 0);
+              const imgData = canvas.toDataURL('image/png');
+              doc.addImage(imgData, 'PNG', 18, 12, 46, 46);
+            }
+          } catch(innerErr){
+            console.warn('Could not add logo to PDF:', innerErr);
           }
+
+          // School title
+          doc.setFontSize(16);
+          doc.setTextColor(255,255,255);
+          doc.text("SA College Private School", 80, 28);
+
+          // Receipt title on gold
+          doc.setFillColor(255,193,7); // gold
+          doc.rect(pageWidth - 200, 18, 180, 30, 'F');
+          doc.setFontSize(11);
+          doc.setTextColor(0,0,0);
+          doc.text("Uniform Order Receipt", pageWidth - 190, 38);
+
+          // Body text
+          doc.setFontSize(10);
+          doc.setTextColor(35,35,35);
+          const left = 18;
+          let y = 100;
+          doc.text(`Parent: ${details.parentName || ''}`, left, y); y += 16;
+          doc.text(`Contact: ${details.contactNumber || ''}`, left, y); y += 16;
+          doc.text(`Email: ${details.email || ''}`, left, y); y += 16;
+          doc.text(`Learner: ${details.learnerName || ''}`, left, y); y += 16;
+          doc.text(`Grade: ${details.grade || ''}`, left, y); y += 16;
+          doc.text(`Level: ${details.schoolLevel || ''}`, left, y); y += 26;
+
+          // Build table array for autoTable
+          const tableBody = (cartItems && cartItems.length) ? cartItems.map(it => [it.name, it.size, String(it.qty), `R${it.price}`, `R${(it.qty*it.price).toFixed(2)}`]) : [['No items','','','','']];
+
+          // Add table using autoTable
+          doc.autoTable({
+            startY: y,
+            head: [['Item', 'Size', 'Qty', 'Unit Price', 'Line Total']],
+            body: tableBody,
+            styles: { fontSize: 10, cellPadding: 6 },
+            headStyles: { fillColor: [0,39,77], textColor: 255, halign: 'center' },
+            theme: 'grid',
+            margin: { left: 12, right: 12 }
+          });
+
+          // Grand total
+          const finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY : (y + 120);
+          const grand = (cartItems || []).reduce((s, it) => s + (it.price * it.qty), 0);
+          doc.setFontSize(11);
+          doc.setTextColor(0,0,0);
+          doc.text(`Grand Total: R${grand.toFixed(2)}`, 18, finalY + 18);
+
+          // Add Banking details to the receipt
+          let bankY = finalY + 40;
+          doc.setFontSize(10);
+          doc.text('Payment Instructions (EFT):', 18, bankY); bankY += 14;
+          doc.text('Use reference: "Uniform – [Child\\'s Name]"', 18, bankY); bankY += 14;
+          doc.text('Bank: Nedbank Limited', 18, bankY); bankY += 12;
+          doc.text('Branch Code: 198765', 18, bankY); bankY += 12;
+          doc.text('Account Holder: SA College Private School', 18, bankY); bankY += 12;
+          doc.text('Account Number: 1202745946', 18, bankY); bankY += 12;
+          doc.text('Account Type: Cheque', 18, bankY); bankY += 18;
+
+          // Footer with school contact
+          doc.setFontSize(9);
+          doc.setTextColor(120,120,120);
+          doc.text("SA College Private School • admin@sacps.co.za • Tel: 012 326 4580 / 064 548 9428", 18, doc.internal.pageSize.getHeight() - 30);
+
+          // Return doc + useful outputs
+          return {
+            doc,
+            dataUrl: doc.output('datauristring'), // datauri (useful for inline preview)
+            base64: doc.output('dataurlstring') // dataurl with base64 payload
+          };
         } catch(err){
-          console.warn('Could not add logo to PDF:', err);
+          console.error('createReceiptPDF error:', err);
+          throw err;
         }
-
-        // School title
-        doc.setFontSize(16);
-        doc.setTextColor(255,255,255);
-        doc.text("SA College Private School", 80, 28);
-
-        // Receipt title on gold
-        doc.setFillColor(255,193,7); // gold
-        doc.rect(pageWidth - 200, 18, 180, 30, 'F');
-        doc.setFontSize(11);
-        doc.setTextColor(0,0,0);
-        doc.text("Uniform Order Receipt", pageWidth - 190, 38);
-
-        // Body text
-        doc.setFontSize(10);
-        doc.setTextColor(35,35,35);
-        const left = 18;
-        let y = 100;
-        doc.text(`Parent: ${details.parentName}`, left, y); y += 16;
-        doc.text(`Contact: ${details.contactNumber}`, left, y); y += 16;
-        doc.text(`Email: ${details.email}`, left, y); y += 16;
-        doc.text(`Learner: ${details.learnerName}`, left, y); y += 16;
-        doc.text(`Grade: ${details.grade}`, left, y); y += 16;
-        doc.text(`Level: ${details.schoolLevel}`, left, y); y += 26;
-
-        // Build table array for autoTable
-        const tableBody = cartItems.map(it => [it.name, it.size, String(it.qty), `R${it.price}`, `R${(it.qty*it.price).toFixed(2)}`]);
-
-        // If no items, put a placeholder row
-        if(tableBody.length === 0) tableBody.push(['No items','','','','']);
-
-        // Add table using autoTable
-        doc.autoTable({
-          startY: y,
-          head: [['Item', 'Size', 'Qty', 'Unit Price', 'Line Total']],
-          body: tableBody,
-          styles: { fontSize: 10, cellPadding: 6 },
-          headStyles: { fillColor: [0,39,77], textColor: 255, halign: 'center' },
-          theme: 'grid',
-          margin: { left: 12, right: 12 }
-        });
-
-        // Grand total
-        const finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY : y + 120;
-        const grand = cartItems.reduce((s, it) => s + (it.price * it.qty), 0);
-        doc.setFontSize(11);
-        doc.setTextColor(0,0,0);
-        doc.text(`Grand Total: R${grand.toFixed(2)}`, 18, finalY + 18);
-
-        // Footer with school contact
-        doc.setFontSize(9);
-        doc.setTextColor(120,120,120);
-        doc.text("SA College Private School • admin@sacps.co.za • Tel: 012 326 4580 / 064 548 9428", 18, doc.internal.pageSize.getHeight() - 30);
-
-        // Return the jsPDF doc object and a base64 string for attaching to EmailJS if desired
-        return {
-          doc,
-          dataUrl: doc.output('datauristring'), // datauri (useful for inline preview)
-          base64: doc.output('dataurlstring') // this returns data:application/pdf;filename=generated.pdf;base64,....
-        };
       }
 
       // ---------------------------
       // Submit: generate PDF, download, send email via EmailJS
       // ---------------------------
-      document.getElementById('orderForm').addEventListener('submit', async function(e){
-        e.preventDefault();
+      function wireFormSubmit(){
+        const form = document.getElementById('orderForm');
+        if(!form) return;
 
-        // Disable submit to avoid double submissions
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Processing...';
+        form.addEventListener('submit', async function(e){
+          e.preventDefault();
 
-        try {
-          // gather form details and cart
-          const parentName = document.getElementById('parentName').value.trim();
-          const contactNumber = document.getElementById('contactNumber').value.trim();
-          const email = document.getElementById('email').value.trim();
-          const learnerName = document.getElementById('learnerName').value.trim();
-          const grade = document.getElementById('grade').value.trim();
-          const schoolLevel = document.getElementById('schoolLevel').value.trim();
-
-          // collect cart items from DOM
-          collectCartFromDOM();
-          if(cart.length === 0){
-            alert('Please add at least one uniform item before submitting.');
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Submit Order & Download Receipt';
-            return;
+          const submitBtn = document.getElementById('submitBtn');
+          if(submitBtn){
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
           }
 
-          const details = { parentName, contactNumber, email, learnerName, grade, schoolLevel };
-
-          // create PDF
-          const { doc, dataUrl, base64 } = await createReceiptPDF(details, cart);
-
-          // prompt download for parent
           try {
-            const fileName = `SACollege_Receipt_${learnerName || 'Order'}.pdf`;
-            // save the file locally for parent
-            doc.save(fileName);
-          } catch (err){
-            console.warn('PDF download failed locally:', err);
-          }
+            // gather form details and cart
+            const parentName = (document.getElementById('parentName')?.value || '').trim();
+            const contactNumber = (document.getElementById('contactNumber')?.value || '').trim();
+            const email = (document.getElementById('email')?.value || '').trim();
+            const learnerName = (document.getElementById('learnerName')?.value || '').trim();
+            const grade = (document.getElementById('grade')?.value || '').trim();
+            const schoolLevel = (document.getElementById('schoolLevel')?.value || '').trim();
 
-          // Prepare email template parameters for EmailJS
-const cartTotal = cart.reduce((sum, it) => sum + (it.price * it.qty), 0);
-
-// Build a readable orderDetails string from cart items
-const orderDetails = cart.map(it => 
-  `${it.name} | Size: ${it.size} | Qty: ${it.qty} | R${(it.price*it.qty).toFixed(2)}`
-).join('\n');
-
-const emailParams = {
-  parentName: parentName,       // matches {{parentName}}
-  contactNumber: contactNumber, // matches {{contactNumber}}
-  email: email,                 // matches {{email}}
-  parentEmail: email,           // matches {{parentEmail}}
-  learnerName: learnerName,     // matches {{learnerName}}
-  grade: grade,                 // matches {{grade}}
-  schoolLevel: schoolLevel,     // matches {{schoolLevel}}
-  orderDetails: orderDetails,   // matches {{orderDetails}}
-  cartTotal: `R${cartTotal.toFixed(2)}` // matches {{cartTotal}}
-};
-
-
-          // Send email using EmailJS service/template from your account
-          // Service ID: service_fe66puw
-          // Template ID: template_oq150rd
-          // (emailjs.init called earlier with public key)
-          try {
-            const response = await emailjs.send("service_fe66puw", "template_oq150rd", emailParams);
-            console.log("EmailJS response:", response);
-            alert("Order submitted successfully. Receipt downloaded.");
-            // reset form and cart
-            document.getElementById('orderForm').reset();
-            // clear all qty inputs
-            document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
+            // collect cart items from DOM
             collectCartFromDOM();
-            renderCart();
-          } catch (sendErr) {
-            console.error("EmailJS send error:", sendErr);
-            // Even if email fails, the parent still gets the downloaded receipt
-            alert("Order saved and receipt downloaded, but sending email notification failed. Please check EmailJS setup.");
+            if(cart.length === 0){
+              alert('Please add at least one uniform item before submitting.');
+              if(submitBtn){
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Order & Download Receipt';
+              }
+              return;
+            }
+
+            const details = { parentName, contactNumber, email, learnerName, grade, schoolLevel };
+
+            // create PDF
+            const { doc, dataUrl, base64 } = await createReceiptPDF(details, cart);
+
+            // prompt download for parent
+            try {
+              const fileName = `SACollege_Receipt_${learnerName || 'Order'}.pdf`;
+              doc.save(fileName);
+            } catch (err){
+              console.warn('PDF download failed locally:', err);
+            }
+
+            // Prepare email template parameters for EmailJS
+            const cartTotal = cart.reduce((sum, it) => sum + (it.price * it.qty), 0);
+
+            // Build a readable orderDetails string from cart items
+            const orderDetails = cart.map(it =>
+              `${it.name} | Size: ${it.size} | Qty: ${it.qty} | R${(it.price*it.qty).toFixed(2)}`
+            ).join('\n');
+
+            const emailParams = {
+              parentName: parentName,
+              contactNumber: contactNumber,
+              email: email,
+              parentEmail: email,
+              learnerName: learnerName,
+              grade: grade,
+              schoolLevel: schoolLevel,
+              orderDetails: orderDetails,
+              cartTotal: `R${cartTotal.toFixed(2)}`,
+              // If you want to attach base64 pdf to EmailJS template, include base64 (but ensure template supports it)
+              pdfBase64: base64
+            };
+
+            // Send email using EmailJS service/template from your account
+            // Service ID and Template ID kept from your setup
+            try {
+              const response = await emailjs.send("service_fe66puw", "template_oq150rd", emailParams);
+              console.log("EmailJS response:", response);
+              alert("Order submitted successfully. Receipt downloaded.");
+              // reset form and cart
+              document.getElementById('orderForm').reset();
+              // clear all qty inputs
+              document.querySelectorAll('.item-row .qty').forEach(q => q.value = 0);
+              collectCartFromDOM();
+              renderCart();
+            } catch (sendErr) {
+              console.error("EmailJS send error:", sendErr);
+              alert("Order saved and receipt downloaded, but sending email notification failed. Please check EmailJS setup.");
+            }
+
+          } catch (err) {
+            console.error("Submit error:", err);
+            alert("An error occurred while submitting. Please try again.");
+          } finally {
+            if(submitBtn){
+              submitBtn.disabled = false;
+              submitBtn.textContent = 'Submit Order & Download Receipt';
+            }
           }
+        });
+      }
 
+      // ---------------------------
+      // Initialization helper
+      // - ensures products render whether DOMContentLoaded has already fired or not
+      // ---------------------------
+      function initPage(){
+        try {
+          // Render product lists into card bodies
+          renderAllProducts();
+
+          // Collect & render empty cart initially
+          collectCartFromDOM();
+          renderCart();
+
+          // Wire form submit handler
+          wireFormSubmit();
+
+          // Expose helpers for debugging
+          window._sa_helpers = {
+            collectCartFromDOM,
+            renderCart,
+            createReceiptPDF,
+            renderAllProducts,
+            categories,
+            cart
+          };
+
+          console.log('SA College Uniform page initialized');
         } catch (err) {
-          console.error("Submit error:", err);
-          alert("An error occurred while submitting. Please try again.");
-        } finally {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Submit Order & Download Receipt';
+          console.error('initPage error:', err);
         }
-      });
+      }
 
-      // Small UX improvement: allow pressing Enter in any field to submit (native form)
-      // handled by form submit above.
+      // If DOM is still loading, wait. Otherwise, run immediately.
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPage);
+      } else {
+        // DOM already parsed — run now
+        setTimeout(initPage, 0);
+      }
 
-      // Ensure cart is rendered initially (shows 'No items')
-      collectCartFromDOM();
-      renderCart();
-
-      // Expose useful functions for debugging from console (optional)
-      window._sa_helpers = {
-        collectCartFromDOM, renderCart, createReceiptPDF, categories, cart
-      };
+      // Small note: the global "input" listener above keeps cart in sync
+      // and the init function ensures the product rows are present.
 
     })();
   </script>
@@ -818,9 +879,3 @@ const emailParams = {
        ========================= -->
 </body>
 </html>
-
-
-
-
-
-
