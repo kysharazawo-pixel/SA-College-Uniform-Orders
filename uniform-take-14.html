@@ -49,19 +49,6 @@
       background: var(--muted);
       color:#111;
     }
-   .notice-bar {
-  background: #ffc107;
-  color: #111;
-  text-align: center;
-  padding: 10px 16px;
-  font-size: 14px;
-  font-weight: 500;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-  border-bottom: 3px solid #00274d;
-}
-.notice-bar strong {
-  color: #00274d;
-}
 
     /* Header */
     header.site-header{
@@ -93,6 +80,17 @@
       margin:3px 0 0 0;
       font-size:13px;
       color: rgba(255,255,255,0.9);
+    }
+
+    /* Info banner placed below header */
+    .info-banner {
+      background: var(--gold);
+      color: #00274d;
+      font-weight:600;
+      padding:10px 20px;
+      text-align:center;
+      font-size:13px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
     }
 
     /* Page wrapper */
@@ -200,6 +198,7 @@
       font-weight:700;
       margin:-10px -10px 10px -10px;
     }
+
     .product-row{
       display:flex;
       gap:10px;
@@ -249,23 +248,19 @@
        Header with logo + contact
        ========================= -->
   <header class="site-header" role="banner">
-  <img class="logo" id="schoolLogo" src="logo.jpg" alt="SA College Private School logo" />
-  <div class="heading">
-    <h1>SA College Private School</h1>
-    <p class="muted">
-      admin@sacps.co.za • info@sacps.co.za • uniformsacps@gmail.com<br>
-      Tel: 012 326 4580 / 064 548 9428
-    </p>
+    <!-- Make sure your logo image is in the same folder and named exactly as used below. -->
+    <!-- If you uploaded logo.jpg to /mnt/data earlier, use that filename or change src accordingly. -->
+    <img class="logo" id="schoolLogo" src="logo.jpg" alt="SA College Private School logo" />
+    <div class="heading">
+      <h1>SA College Private School</h1>
+<p class="muted">admin@sacps.co.za • info@sacps.co.za • uniformsacps@gmail.com               Tel: 012 326 4580 / 064 548 9428</p>
+    </div>
+  </header>
+
+  <!-- Info banner moved out of header (gold background) -->
+  <div class="info-banner" role="note" aria-live="polite">
+    SA College private school is using braten in an attempt to provide uniform at a more affordable price to parents. SACPS will still be using Select Outfitters and parents are welcome to use them. All orders placed now will be delivered at school and given to your child before the last day of school, ready for January 2026 with no need to stand in queues.
   </div>
-</header>
-
-<!-- Info notice moved underneath header -->
-<div class="notice-bar">
-  SA College Private School is working with <strong>Braten</strong> to make uniform more affordable.
-  Orders placed now will be delivered at school before closing for the year — 
-  <strong>ready for January 2026</strong> with no queues needed.
-</div>
-
 
   <!-- =========================
        Main page content
@@ -327,17 +322,16 @@
         <div class="section" id="productsSection">
           <h2 style="margin-top:0; color:var(--navy)">Uniforms & Sports</h2>
 
-<!-- Headings row for size and quantity -->
-<div style="display:flex; justify-content:flex-end; gap:100px; font-weight:600; color:#00274d; margin-bottom:6px; padding-right:30px;">
-  <span>Size</span>
-  <span>Quantity</span>
-</div>
-
-
           <!-- Tracksuits -->
           <div class="category-card" id="cat-tracksuits">
             <div class="cat-header">Tracksuits</div>
             <div class="card-body">
+              <!-- Size & Quantity headings -->
+              <div style="display:flex; gap:10px; align-items:center; padding:8px 0; border-bottom:2px solid var(--gold); margin-bottom:8px; font-weight:700; color:var(--navy);">
+                <div style="flex:1;">Item</div>
+                <div style="width:110px; text-align:center;">Size</div>
+                <div style="width:70px; text-align:center;">Quantity</div>
+              </div>
               <!-- Items will be injected by JS -->
             </div>
           </div>
@@ -345,25 +339,53 @@
           <!-- Jerseys & Pullovers -->
           <div class="category-card" id="cat-jerseys">
             <div class="cat-header">Jerseys & Pullovers</div>
-            <div class="card-body"></div>
+            <div class="card-body">
+              <!-- Size & Quantity headings -->
+              <div style="display:flex; gap:10px; align-items:center; padding:8px 0; border-bottom:2px solid var(--gold); margin-bottom:8px; font-weight:700; color:var(--navy);">
+                <div style="flex:1;">Item</div>
+                <div style="width:110px; text-align:center;">Size</div>
+                <div style="width:70px; text-align:center;">Quantity</div>
+              </div>
+            </div>
           </div>
 
           <!-- Formal -->
           <div class="category-card" id="cat-formal">
             <div class="cat-header">Formal</div>
-            <div class="card-body"></div>
+            <div class="card-body">
+              <!-- Size & Quantity headings -->
+              <div style="display:flex; gap:10px; align-items:center; padding:8px 0; border-bottom:2px solid var(--gold); margin-bottom:8px; font-weight:700; color:var(--navy);">
+                <div style="flex:1;">Item</div>
+                <div style="width:110px; text-align:center;">Size</div>
+                <div style="width:70px; text-align:center;">Quantity</div>
+              </div>
+            </div>
           </div>
 
           <!-- Sportswear -->
           <div class="category-card" id="cat-sports">
             <div class="cat-header">Sportswear</div>
-            <div class="card-body"></div>
+            <div class="card-body">
+              <!-- Size & Quantity headings -->
+              <div style="display:flex; gap:10px; align-items:center; padding:8px 0; border-bottom:2px solid var(--gold); margin-bottom:8px; font-weight:700; color:var(--navy);">
+                <div style="flex:1;">Item</div>
+                <div style="width:110px; text-align:center;">Size</div>
+                <div style="width:70px; text-align:center;">Quantity</div>
+              </div>
+            </div>
           </div>
 
           <!-- Accessories -->
           <div class="category-card" id="cat-accessories">
             <div class="cat-header">Accessories</div>
-            <div class="card-body"></div>
+            <div class="card-body">
+              <!-- Size & Quantity headings -->
+              <div style="display:flex; gap:10px; align-items:center; padding:8px 0; border-bottom:2px solid var(--gold); margin-bottom:8px; font-weight:700; color:var(--navy);">
+                <div style="flex:1;">Item</div>
+                <div style="width:110px; text-align:center;">Size</div>
+                <div style="width:70px; text-align:center;">Quantity</div>
+              </div>
+            </div>
           </div>
 
         </div>
@@ -842,9 +864,3 @@ const emailParams = {
        ========================= -->
 </body>
 </html>
-
-
-
-
-
-
