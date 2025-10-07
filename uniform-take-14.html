@@ -49,6 +49,19 @@
       background: var(--muted);
       color:#111;
     }
+   .notice-bar {
+  background: #ffc107;
+  color: #111;
+  text-align: center;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  border-bottom: 3px solid #00274d;
+}
+.notice-bar strong {
+  color: #00274d;
+}
 
     /* Header */
     header.site-header{
@@ -236,16 +249,23 @@
        Header with logo + contact
        ========================= -->
   <header class="site-header" role="banner">
-    <!-- Make sure your logo image is in the same folder and named exactly as used below. -->
-    <!-- If you uploaded logo.jpg to /mnt/data earlier, use that filename or change src accordingly. -->
-    <img class="logo" id="schoolLogo" src="logo.jpg" alt="SA College Private School logo" />
-    <div class="heading">
-      <h1>SA College Private School</h1>
-<p class="muted">admin@sacps.co.za • info@sacps.co.za • uniformsacps@gmail.com               Tel: 012 326 4580 / 064 548 9428</p>
-    </div>
-        
-.
-  </header>
+  <img class="logo" id="schoolLogo" src="logo.jpg" alt="SA College Private School logo" />
+  <div class="heading">
+    <h1>SA College Private School</h1>
+    <p class="muted">
+      admin@sacps.co.za • info@sacps.co.za • uniformsacps@gmail.com<br>
+      Tel: 012 326 4580 / 064 548 9428
+    </p>
+  </div>
+</header>
+
+<!-- Info notice moved underneath header -->
+<div class="notice-bar">
+  SA College Private School is working with <strong>Braten</strong> to make uniform more affordable.
+  Orders placed now will be delivered at school before closing for the year — 
+  <strong>ready for January 2026</strong> with no queues needed.
+</div>
+
 
   <!-- =========================
        Main page content
@@ -310,6 +330,13 @@
         <!-- Products area: categories and items -->
         <div class="section" id="productsSection">
           <h2 style="margin-top:0; color:var(--navy)">Uniforms & Sports</h2>
+
+<!-- Headings row for size and quantity -->
+<div style="display:flex; justify-content:flex-end; gap:100px; font-weight:600; color:#00274d; margin-bottom:6px; padding-right:30px;">
+  <span>Size</span>
+  <span>Quantity</span>
+</div>
+
 
           <!-- Tracksuits -->
           <div class="category-card" id="cat-tracksuits">
@@ -819,6 +846,7 @@ const emailParams = {
        ========================= -->
 </body>
 </html>
+
 
 
 
